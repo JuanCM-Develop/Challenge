@@ -11,28 +11,89 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
+using Microsoft.EntityFrameworkCore;
+using RetoAlk.Models;
 
 namespace RetoAlk
 {
     public class Startup
     {
-        public Startup(IConfiguration configuration)
+        public Startup(IConfiguration configuration, IWebHostEnvironment env )
         {
             Configuration = configuration;
+            _env = env;
         }
 
         public IConfiguration Configuration { get; }
+        public IWebHostEnvironment _env{get;}
+
 
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
 
             services.AddControllers();
+
+            services.AddDbContext<PersonajeContext>(opt =>
+            {
+                var connectionStringPersonajes = Configuration.GetConnectionString("PersonajeContext");
+                
+
+                if (_env.IsDevelopment())
+                {
+                    opt.UseSqlite(connectionStringPersonajes);
+                }
+                else 
+                {
+                    opt.UseSqlServer(connectionStringPersonajes);
+                }
+            });
+
+            services.AddDbContext<PeliculaContext>(opt =>
+            {
+                var connectionStringPeliculas = Configuration.GetConnectionString("PeliculaContext");
+                
+
+                if (_env.IsDevelopment())
+                {
+                    opt.UseSqlite(connectionStringPeliculas);
+                }
+                else 
+                {
+                    opt.UseSqlServer(connectionStringPeliculas);
+                }
+            });
+
+            services.AddDbContext<UsuarioContext>(opt =>
+            {
+                var connectionStringUsuarios = Configuration.GetConnectionString("UsuarioContext");
+                
+
+                if (_env.IsDevelopment())
+                {
+                    opt.UseSqlite(connectionStringUsuarios);
+                }
+                else 
+                {
+                    opt.UseSqlServer(connectionStringUsuarios);
+                }
+            });
+
+            //services.AddDbContext<PeliculaContext>(options =>
+            //         options.UseSqlServer(Configuration.GetConnectionString("PeliculaContext")));
+
+            //services.AddDbContext<PersonajeContext>(options =>
+            //        options.UseSqlServer(Configuration.GetConnectionString("PersonajeContext")));
+
+            //services.AddDbContext<UsuarioContext>(options =>
+            //        options.UseSqlServer(Configuration.GetConnectionString("UsuarioContext")));
+            //                                   opt.UseInMemoryDatabase("PersonajesList"));
             services.AddSwaggerGen(c =>
             {
-                c.SwaggerDoc("v1", new OpenApiInfo { Title = "RetoAlk", Version = "v1" });
+                c.SwaggerDoc("v1", new OpenApiInfo { Title = "TodoApi", Version = "v1" });
             });
         }
+
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
