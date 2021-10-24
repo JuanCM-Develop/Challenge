@@ -9,55 +9,66 @@ using RetoAlk.Models.Requests;
 
 namespace RetoAlk.Controllers
 {
-    [Route("api/[controller]/{id}")]
+    [Route("[controller]/[Action]")]
     [ApiController]
     public class AuthController : ControllerBase
     {
-        private static int valorId = 1;
-        private static int valorIdToken = 100;
+        private static int valorId = 100;
+        private static int valorIdToken = 1000;
         private readonly UsuarioContext _context;
 
         public AuthController(UsuarioContext context)
         {
             _context = context;
         }
-
-        /*/ GET: api/Auth
-        [HttpGet]
-        public string Inicio()
-        {
-            return  "Agregue un usuario y contraseña a la url";
-        }
-        */
         
         [HttpGet]
-        public User Login ()
+        public User Login(string nombre, string password)
         {
-            User usuario = new User();
-            usuario.Nombre = "Ingrese usuario";
-            usuario.Password = "auto cifrado";
-            usuario.Id = valorId;
-            usuario.IdToken = valorIdToken;
-            valorId++;
-            valorIdToken += 10;
 
+            var result = from m in _context.User select m;
+
+            User usuario = new User();
+
+            foreach(var p in result.ToList())
+            {
+                if (p.Nombre == nombre && p.Password == password)
+                {
+                    return p;
+                }
+            }
             return usuario;
         }
-
-        [HttpGet("{nom}")]
-        public User Register (string nom)
+/*
+        [HttpPost]
+        public async Task<ActionResult<User>> Register(User usuario)
         {
-            User usuario = new User();
-            usuario.Id = valorId;
-            usuario.Nombre = nom;
-            usuario.Password = "pass";
-            usuario.IdToken = valorIdToken;
-            return usuario;
+            _context.User.Add(usuario);
+            try
+            {
+                await _context.SaveChangesAsync();
+            }
+            catch (DbUpdateException)
+            {
+                if (UserExists(usuario.Id))
+                {
+                    return Conflict();
+                }
+                else
+                {
+                    throw;
+                }
+            }
+
+            return CreatedAtAction("Registrar", new { id = usuario.Id }, usuario);
         }
+*/
 
         private bool UserExists(int id)
         {
             return _context.User.Any(e => e.Id == id);
         }
+
+    
     }
 }

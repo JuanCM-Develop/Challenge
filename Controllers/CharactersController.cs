@@ -9,7 +9,7 @@ using RetoAlk.Models.Requests;
 
 namespace RetoAlk.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("[controller]/[Action]")]
     [ApiController]
     public class CharactersController : ControllerBase
     {
@@ -21,7 +21,7 @@ namespace RetoAlk.Controllers
         }
 
         [HttpGet]
-        public List<string> MostrarImagenNombre()
+        public List<string> Characters()
         {
             var personajes = from m in _context.Personaje select m;
 
@@ -29,28 +29,19 @@ namespace RetoAlk.Controllers
 
             foreach (var p in personajes.ToList())
             {
-                string arreglo = p.Nombre + " " +p.Imagen;
+                string arreglo = p.Nombre + " " + p.Imagen;
                 nombres.Add(arreglo);
             }
             return nombres;
         }
 
-        [HttpGet("{nombre}")]
-        public async Task<ActionResult<Personaje>> name(string nombre)
-        {
-            var result = await _context.Personaje.FindAsync(nombre);
 
-            if (result == null)
-            {
-                return NotFound(nombre);
-            }
-            return result;
-        }
-
+        
+        //Actualizar
         // PUT: api/Characters/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutPersonaje(string id, Personaje personaje)
+        public async Task<IActionResult> PostPersonaje(string id, Personaje personaje)
         {
             if (id != personaje.Nombre)
             {
@@ -100,7 +91,7 @@ namespace RetoAlk.Controllers
                 }
             }
 
-            return CreatedAtAction("GetPersonaje", new { id = personaje.Nombre }, personaje);
+            return CreatedAtAction("MostrarImagenNombre", new { id = personaje.Nombre }, personaje);
         }
 
         // DELETE: api/Characters/5

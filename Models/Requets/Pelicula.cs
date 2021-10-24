@@ -6,6 +6,7 @@ namespace RetoAlk.Models.Requests
 {
     public class Pelicula
     {
+
         public string Imagen {get;set;}
         [Key]
         public string Titulo {get;set;}

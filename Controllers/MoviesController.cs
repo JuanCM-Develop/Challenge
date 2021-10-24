@@ -9,7 +9,7 @@ using RetoAlk.Models.Requests;
 
 namespace RetoAlk.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("[controller]")]
     [ApiController]
     public class MoviesController : ControllerBase
     {
